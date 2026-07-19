@@ -27,6 +27,12 @@ class ZPTOPO_PT_main_panel(bpy.types.Panel):
             icon="GROUP_UVS",
         )
 
+        layout.operator(
+            "zptopo.select_uv_boundary_edges",
+            text="Select UV Boundary Edges",
+            icon="EDGESEL",
+        )
+
         layout.separator()
 
         box = layout.box()

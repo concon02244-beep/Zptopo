@@ -10,7 +10,7 @@ def _quantize_uv(uv, tolerance=0.000001):
     """
     UV 좌표를 허용 오차 기준의 정수로 변환한다.
 
-    미세한 부동소수점 오차 때문에 같은 UV가
+    같은 위치의 UV가 미세한 소수점 오차 때문에
     서로 다른 좌표로 판정되는 것을 방지한다.
     """
     return (
@@ -22,7 +22,7 @@ def _quantize_uv(uv, tolerance=0.000001):
 def _collect_uv_edge_data(mesh, uv_layer):
     """
     각 폴리곤이 사용하는 메쉬 엣지와
-    그 엣지 양 끝의 UV 좌표를 수집한다.
+    해당 엣지 양 끝의 UV 좌표를 수집한다.
     """
     edge_uv_data = {}
 
@@ -35,8 +35,12 @@ def _collect_uv_edge_data(mesh, uv_layer):
                 (position + 1) % loop_count
             ]
 
-            vertex_a = mesh.loops[loop_index].vertex_index
-            vertex_b = mesh.loops[next_loop_index].vertex_index
+            loop = mesh.loops[loop_index]
+            next_loop = mesh.loops[next_loop_index]
+
+            vertex_a = loop.vertex_index
+            vertex_b = next_loop.vertex_index
+            edge_index = loop.edge_index
 
             uv_a = tuple(uv_layer.data[loop_index].uv)
             uv_b = tuple(uv_layer.data[next_loop_index].uv)
@@ -46,6 +50,7 @@ def _collect_uv_edge_data(mesh, uv_layer):
             edge_uv_data.setdefault(edge_key, []).append(
                 {
                     "face_index": polygon.index,
+                    "edge_index": edge_index,
                     "uv_by_vertex": {
                         vertex_a: uv_a,
                         vertex_b: uv_b,
@@ -147,21 +152,20 @@ def count_uv_islands(
     return island_count
 
 
-def count_uv_boundary_edges(
+def _find_uv_boundary_data(
     edge_uv_data,
     tolerance=0.000001,
 ):
     """
-    UV 공간에서 한 면에만 사용되는 엣지 조각의 수를 센다.
-
-    메쉬 외곽선뿐 아니라 UV 심으로 분리된 양쪽 엣지도
-    각각 UV 경계 엣지로 계산된다.
+    UV 경계 조각 수와 경계에 해당하는
+    실제 메쉬 엣지 인덱스를 반환한다.
     """
-    boundary_edge_count = 0
+    boundary_segment_count = 0
+    boundary_mesh_edge_indices = set()
 
     for edge_key, edge_uses in edge_uv_data.items():
         vertex_a, vertex_b = edge_key
-        uv_segment_counts = {}
+        uv_segment_uses = {}
 
         for edge_use in edge_uses:
             uv_a = edge_use["uv_by_vertex"][vertex_a]
@@ -172,15 +176,85 @@ def count_uv_boundary_edges(
                 _quantize_uv(uv_b, tolerance),
             )
 
-            uv_segment_counts[segment_key] = (
-                uv_segment_counts.get(segment_key, 0) + 1
+            uv_segment_uses.setdefault(
+                segment_key,
+                [],
+            ).append(edge_use)
+
+        for segment_uses in uv_segment_uses.values():
+            if len(segment_uses) != 1:
+                continue
+
+            boundary_segment_count += 1
+
+            boundary_mesh_edge_indices.add(
+                segment_uses[0]["edge_index"]
             )
 
-        for usage_count in uv_segment_counts.values():
-            if usage_count == 1:
-                boundary_edge_count += 1
+    return (
+        boundary_segment_count,
+        boundary_mesh_edge_indices,
+    )
 
-    return boundary_edge_count
+
+def count_uv_boundary_edges(
+    edge_uv_data,
+    tolerance=0.000001,
+):
+    """
+    UV 공간에서 경계를 이루는 UV 엣지 조각 수를 반환한다.
+    """
+    boundary_count, _ = _find_uv_boundary_data(
+        edge_uv_data,
+        tolerance,
+    )
+
+    return boundary_count
+
+
+def get_uv_boundary_mesh_edge_indices(
+    context,
+    tolerance=0.000001,
+):
+    """
+    UV 경계에 해당하는 실제 Blender 메쉬 엣지의
+    인덱스 집합을 반환한다.
+    """
+    obj = context.active_object
+
+    if obj is None:
+        raise ValueError("활성 오브젝트가 없습니다.")
+
+    if obj.type != "MESH":
+        raise ValueError("선택한 오브젝트가 메쉬가 아닙니다.")
+
+    if obj.mode == "EDIT":
+        obj.update_from_editmode()
+
+    mesh = obj.data
+
+    if not mesh.polygons:
+        raise ValueError("선택한 메쉬에 면이 없습니다.")
+
+    if not mesh.uv_layers:
+        raise ValueError("선택한 메쉬에 UV 맵이 없습니다.")
+
+    active_uv = mesh.uv_layers.active
+
+    if active_uv is None:
+        raise ValueError("활성 UV 맵이 없습니다.")
+
+    edge_uv_data = _collect_uv_edge_data(
+        mesh,
+        active_uv,
+    )
+
+    _, boundary_mesh_edge_indices = _find_uv_boundary_data(
+        edge_uv_data,
+        tolerance,
+    )
+
+    return boundary_mesh_edge_indices
 
 
 def get_uv_info(context):
