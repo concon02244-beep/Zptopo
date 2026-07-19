@@ -10,6 +10,7 @@ class ZPTOPO_PT_main_panel(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
+        state = context.scene.zptopo_state
 
         layout.label(text="Garment Retopology")
         layout.separator()
@@ -25,6 +26,22 @@ class ZPTOPO_PT_main_panel(bpy.types.Panel):
             text="Read UV",
             icon="GROUP_UVS",
         )
+
+        layout.separator()
+
+        box = layout.box()
+        box.label(text="UV Information", icon="GROUP_UVS")
+
+        if not state.object_name:
+            box.label(text="No UV data loaded")
+            return
+
+        box.label(text=f"Object: {state.object_name}")
+        box.label(text=f"Vertices: {state.vertex_count}")
+        box.label(text=f"Edges: {state.edge_count}")
+        box.label(text=f"Faces: {state.face_count}")
+        box.label(text=f"UV Layer: {state.uv_layer_name}")
+        box.label(text=f"UV Loops: {state.uv_loop_count}")
 
 
 classes = (

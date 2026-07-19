@@ -23,26 +23,32 @@ class ZPTOPO_OT_read_uv(bpy.types.Operator):
     def execute(self, context):
         try:
             info = get_uv_info(context)
+
         except ValueError as error:
             self.report({"ERROR"}, str(error))
             return {"CANCELLED"}
 
-        message = (
-            f"{info['object_name']} | "
-            f"Vertices: {info['vertex_count']} | "
-            f"Faces: {info['face_count']} | "
-            f"UV: {info['uv_layer_name']}"
+        state = context.scene.zptopo_state
+
+        state.object_name = info["object_name"]
+        state.vertex_count = info["vertex_count"]
+        state.edge_count = info["edge_count"]
+        state.face_count = info["face_count"]
+        state.uv_layer_name = info["uv_layer_name"]
+        state.uv_loop_count = info["uv_loop_count"]
+
+        self.report(
+            {"INFO"},
+            f"UV information loaded: {info['object_name']}",
         )
 
-        self.report({"INFO"}, message)
-
         print("----- Zptopo UV Info -----")
-        print(f"Object: {info['object_name']}")
-        print(f"Vertices: {info['vertex_count']}")
-        print(f"Edges: {info['edge_count']}")
-        print(f"Faces: {info['face_count']}")
-        print(f"UV Layer: {info['uv_layer_name']}")
-        print(f"UV Loops: {info['uv_loop_count']}")
+        print(f"Object: {state.object_name}")
+        print(f"Vertices: {state.vertex_count}")
+        print(f"Edges: {state.edge_count}")
+        print(f"Faces: {state.face_count}")
+        print(f"UV Layer: {state.uv_layer_name}")
+        print(f"UV Loops: {state.uv_loop_count}")
         print("--------------------------")
 
         return {"FINISHED"}
