@@ -37,12 +37,17 @@ class ZPTOPO_OT_read_uv(bpy.types.Operator):
         state.uv_layer_name = info["uv_layer_name"]
         state.uv_loop_count = info["uv_loop_count"]
         state.uv_island_count = info["uv_island_count"]
+        state.uv_boundary_edge_count = info[
+    "uv_boundary_edge_count"
+]
 
         self.report(
             {"INFO"},
             (
                 f"{info['object_name']} | "
-                f"UV Islands: {info['uv_island_count']}"
+                f"Islands: {info['uv_island_count']} | "
+                "Boundary Edges: "
+                f"{info['uv_boundary_edge_count']}"
             ),
         )
 
@@ -54,6 +59,10 @@ class ZPTOPO_OT_read_uv(bpy.types.Operator):
         print(f"UV Layer: {state.uv_layer_name}")
         print(f"UV Loops: {state.uv_loop_count}")
         print(f"UV Islands: {state.uv_island_count}")
+        print(
+    "UV Boundary Edges: "
+    f"{state.uv_boundary_edge_count}"
+)
         print("--------------------------")
 
         return {"FINISHED"}

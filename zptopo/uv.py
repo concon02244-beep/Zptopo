@@ -6,17 +6,24 @@ def _uvs_match(uv_a, uv_b, tolerance=0.000001):
     )
 
 
-def count_uv_islands(mesh, uv_layer, tolerance=0.000001):
+def _quantize_uv(uv, tolerance=0.000001):
     """
-    UV가 끊기지 않은 면들을 하나의 그룹으로 묶어
-    UV 아일랜드 개수를 반환한다.
+    UV 좌표를 허용 오차 기준의 정수로 변환한다.
+
+    미세한 부동소수점 오차 때문에 같은 UV가
+    서로 다른 좌표로 판정되는 것을 방지한다.
     """
+    return (
+        round(uv[0] / tolerance),
+        round(uv[1] / tolerance),
+    )
 
-    face_neighbors = {
-        polygon.index: set()
-        for polygon in mesh.polygons
-    }
 
+def _collect_uv_edge_data(mesh, uv_layer):
+    """
+    각 폴리곤이 사용하는 메쉬 엣지와
+    그 엣지 양 끝의 UV 좌표를 수집한다.
+    """
     edge_uv_data = {}
 
     for polygon in mesh.polygons:
@@ -24,7 +31,9 @@ def count_uv_islands(mesh, uv_layer, tolerance=0.000001):
         loop_count = len(loop_indices)
 
         for position, loop_index in enumerate(loop_indices):
-            next_loop_index = loop_indices[(position + 1) % loop_count]
+            next_loop_index = loop_indices[
+                (position + 1) % loop_count
+            ]
 
             vertex_a = mesh.loops[loop_index].vertex_index
             vertex_b = mesh.loops[next_loop_index].vertex_index
@@ -34,17 +43,39 @@ def count_uv_islands(mesh, uv_layer, tolerance=0.000001):
 
             edge_key = tuple(sorted((vertex_a, vertex_b)))
 
-            uv_by_vertex = {
-                vertex_a: uv_a,
-                vertex_b: uv_b,
-            }
-
             edge_uv_data.setdefault(edge_key, []).append(
                 {
                     "face_index": polygon.index,
-                    "uv_by_vertex": uv_by_vertex,
+                    "uv_by_vertex": {
+                        vertex_a: uv_a,
+                        vertex_b: uv_b,
+                    },
                 }
             )
+
+    return edge_uv_data
+
+
+def count_uv_islands(
+    mesh,
+    uv_layer,
+    edge_uv_data=None,
+    tolerance=0.000001,
+):
+    """
+    UV가 끊기지 않은 면들을 하나의 그룹으로 묶어
+    UV 아일랜드 개수를 반환한다.
+    """
+    if edge_uv_data is None:
+        edge_uv_data = _collect_uv_edge_data(
+            mesh,
+            uv_layer,
+        )
+
+    face_neighbors = {
+        polygon.index: set()
+        for polygon in mesh.polygons
+    }
 
     for edge_key, connected_faces in edge_uv_data.items():
         if len(connected_faces) < 2:
@@ -116,6 +147,42 @@ def count_uv_islands(mesh, uv_layer, tolerance=0.000001):
     return island_count
 
 
+def count_uv_boundary_edges(
+    edge_uv_data,
+    tolerance=0.000001,
+):
+    """
+    UV 공간에서 한 면에만 사용되는 엣지 조각의 수를 센다.
+
+    메쉬 외곽선뿐 아니라 UV 심으로 분리된 양쪽 엣지도
+    각각 UV 경계 엣지로 계산된다.
+    """
+    boundary_edge_count = 0
+
+    for edge_key, edge_uses in edge_uv_data.items():
+        vertex_a, vertex_b = edge_key
+        uv_segment_counts = {}
+
+        for edge_use in edge_uses:
+            uv_a = edge_use["uv_by_vertex"][vertex_a]
+            uv_b = edge_use["uv_by_vertex"][vertex_b]
+
+            segment_key = (
+                _quantize_uv(uv_a, tolerance),
+                _quantize_uv(uv_b, tolerance),
+            )
+
+            uv_segment_counts[segment_key] = (
+                uv_segment_counts.get(segment_key, 0) + 1
+            )
+
+        for usage_count in uv_segment_counts.values():
+            if usage_count == 1:
+                boundary_edge_count += 1
+
+    return boundary_edge_count
+
+
 def get_uv_info(context):
     obj = context.active_object
 
@@ -141,9 +208,19 @@ def get_uv_info(context):
     if active_uv is None:
         raise ValueError("활성 UV 맵이 없습니다.")
 
+    edge_uv_data = _collect_uv_edge_data(
+        mesh,
+        active_uv,
+    )
+
     island_count = count_uv_islands(
         mesh,
         active_uv,
+        edge_uv_data=edge_uv_data,
+    )
+
+    boundary_edge_count = count_uv_boundary_edges(
+        edge_uv_data,
     )
 
     return {
@@ -154,4 +231,5 @@ def get_uv_info(context):
         "uv_layer_name": active_uv.name,
         "uv_loop_count": len(active_uv.data),
         "uv_island_count": island_count,
+        "uv_boundary_edge_count": boundary_edge_count,
     }

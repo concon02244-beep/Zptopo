@@ -43,6 +43,12 @@ class ZPTOPO_PG_state(bpy.types.PropertyGroup):
         default=0,
         min=0,
     )
+    
+    uv_boundary_edge_count: IntProperty(
+        name="UV Boundary Edges",
+        default=0,
+        min=0,
+    )
 
 
 classes = (
