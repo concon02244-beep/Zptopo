@@ -77,7 +77,7 @@ class ZPTOPO_PT_main_panel(bpy.types.Panel):
                 f"UV Islands: "
                 f"{state.uv_island_count}"
             ),
-            icon="UV",
+            icon="GROUP_UVS",
         )
 
         box.label(
@@ -95,7 +95,7 @@ class ZPTOPO_PT_main_panel(bpy.types.Panel):
                 "Closed Boundary Loops: "
                 f"{state.uv_closed_loop_count}"
             ),
-            icon="LOOPSEL",
+            icon="EDGESEL",
         )
 
         box.label(
