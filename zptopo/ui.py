@@ -104,6 +104,20 @@ class ZPTOPO_PT_main_panel(bpy.types.Panel):
                 f"{state.uv_open_chain_count}"
             ),
         )
+        box.label(
+            text=(
+                "Ordered Boundary Loops: "
+                f"{state.uv_ordered_loop_count}"
+            ),
+            icon="EDGESEL",
+        )
+
+        box.label(
+            text=(
+                "Failed Loop Orders: "
+                f"{state.uv_failed_loop_order_count}"
+            ),
+        )
 
         box.label(
             text=(

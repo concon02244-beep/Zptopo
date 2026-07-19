@@ -68,6 +68,13 @@ class ZPTOPO_OT_read_uv(bpy.types.Operator):
         state.uv_open_chain_count = info[
             "uv_open_chain_count"
         ]
+        state.uv_ordered_loop_count = info[
+            "uv_ordered_loop_count"
+        ]
+
+        state.uv_failed_loop_order_count = info[
+            "uv_failed_loop_order_count"
+        ]
 
         state.largest_loop_edge_count = info[
             "largest_loop_edge_count"
@@ -111,6 +118,15 @@ class ZPTOPO_OT_read_uv(bpy.types.Operator):
         print(
             "Open Boundary Chains: "
             f"{state.uv_open_chain_count}"
+        )
+        print(
+            "Ordered Boundary Loops: "
+            f"{state.uv_ordered_loop_count}"
+        )
+
+        print(
+            "Failed Loop Orders: "
+            f"{state.uv_failed_loop_order_count}"
         )
 
         print(

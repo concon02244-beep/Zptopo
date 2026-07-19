@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Zptopo",
     "author": "concon02244-beep",
-    "version": (0, 5, 1),
+    "version": (0, 6, 0),
     "blender": (3, 6, 0),
     "location": "View3D > Sidebar > Zptopo",
     "description": "Garment retopology tools for Blender",

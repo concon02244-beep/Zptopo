@@ -65,6 +65,17 @@ class ZPTOPO_PG_state(bpy.types.PropertyGroup):
         default=0,
         min=0,
     )
+    uv_ordered_loop_count: IntProperty(
+        name="Ordered Boundary Loops",
+        default=0,
+        min=0,
+    )
+
+    uv_failed_loop_order_count: IntProperty(
+        name="Failed Loop Orders",
+        default=0,
+        min=0,
+    )
 
     largest_loop_edge_count: IntProperty(
         name="Largest Loop",

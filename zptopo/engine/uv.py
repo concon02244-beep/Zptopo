@@ -1,3 +1,5 @@
+from .loops import order_boundary_components
+
 def _uvs_match(uv_a, uv_b, tolerance=0.000001):
     """두 UV 좌표가 허용 오차 안에서 같은지 확인한다."""
     return (
@@ -403,6 +405,11 @@ def get_uv_boundary_loop_info(
     components = _build_boundary_components(
         boundary_segments
     )
+    
+    ordered_loops, failed_loop_orders = order_boundary_components(
+        boundary_segments,
+        components,
+    )
 
     closed_loops = [
         component
@@ -439,6 +446,10 @@ def get_uv_boundary_loop_info(
         ),
         "closed_loop_count": len(closed_loops),
         "open_chain_count": len(open_chains),
+        "ordered_loop_count": len(ordered_loops),
+        "failed_loop_order_count": len(
+            failed_loop_orders
+        ),
         "largest_loop_edge_count": (
             largest_loop_edge_count
         ),
@@ -591,9 +602,21 @@ def get_uv_info(context):
                 "closed_loop_count"
             ]
         ),
-        "uv_open_chain_count": (
+                "uv_open_chain_count": (
             boundary_loop_info[
                 "open_chain_count"
+            ]
+        ),
+
+        "uv_ordered_loop_count": (
+            boundary_loop_info[
+                "ordered_loop_count"
+            ]
+        ),
+
+        "uv_failed_loop_order_count": (
+            boundary_loop_info[
+                "failed_loop_order_count"
             ]
         ),
         "largest_loop_edge_count": (
