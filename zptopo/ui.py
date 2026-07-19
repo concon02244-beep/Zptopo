@@ -20,6 +20,12 @@ class ZPTOPO_PT_main_panel(bpy.types.Panel):
             icon="CHECKMARK",
         )
 
+        layout.operator(
+            "zptopo.read_uv",
+            text="Read UV",
+            icon="GROUP_UVS",
+        )
+
 
 classes = (
     ZPTOPO_PT_main_panel,
