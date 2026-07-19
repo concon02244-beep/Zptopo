@@ -36,10 +36,14 @@ class ZPTOPO_OT_read_uv(bpy.types.Operator):
         state.face_count = info["face_count"]
         state.uv_layer_name = info["uv_layer_name"]
         state.uv_loop_count = info["uv_loop_count"]
+        state.uv_island_count = info["uv_island_count"]
 
         self.report(
             {"INFO"},
-            f"UV information loaded: {info['object_name']}",
+            (
+                f"{info['object_name']} | "
+                f"UV Islands: {info['uv_island_count']}"
+            ),
         )
 
         print("----- Zptopo UV Info -----")
@@ -49,6 +53,7 @@ class ZPTOPO_OT_read_uv(bpy.types.Operator):
         print(f"Faces: {state.face_count}")
         print(f"UV Layer: {state.uv_layer_name}")
         print(f"UV Loops: {state.uv_loop_count}")
+        print(f"UV Islands: {state.uv_island_count}")
         print("--------------------------")
 
         return {"FINISHED"}

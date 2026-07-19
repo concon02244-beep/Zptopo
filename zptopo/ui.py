@@ -42,6 +42,10 @@ class ZPTOPO_PT_main_panel(bpy.types.Panel):
         box.label(text=f"Faces: {state.face_count}")
         box.label(text=f"UV Layer: {state.uv_layer_name}")
         box.label(text=f"UV Loops: {state.uv_loop_count}")
+        box.label(
+            text=f"UV Islands: {state.uv_island_count}",
+            icon="UV",
+        )
 
 
 classes = (

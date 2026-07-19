@@ -38,6 +38,12 @@ class ZPTOPO_PG_state(bpy.types.PropertyGroup):
         min=0,
     )
 
+    uv_island_count: IntProperty(
+        name="UV Islands",
+        default=0,
+        min=0,
+    )
+
 
 classes = (
     ZPTOPO_PG_state,
@@ -54,7 +60,8 @@ def register():
 
 
 def unregister():
-    del bpy.types.Scene.zptopo_state
+    if hasattr(bpy.types.Scene, "zptopo_state"):
+        del bpy.types.Scene.zptopo_state
 
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
