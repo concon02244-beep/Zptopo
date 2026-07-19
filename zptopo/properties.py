@@ -1,6 +1,10 @@
 import bpy
 
-from bpy.props import IntProperty, PointerProperty, StringProperty
+from bpy.props import (
+    IntProperty,
+    PointerProperty,
+    StringProperty,
+)
 
 
 class ZPTOPO_PG_state(bpy.types.PropertyGroup):
@@ -43,9 +47,33 @@ class ZPTOPO_PG_state(bpy.types.PropertyGroup):
         default=0,
         min=0,
     )
-    
+
     uv_boundary_edge_count: IntProperty(
         name="UV Boundary Edges",
+        default=0,
+        min=0,
+    )
+
+    uv_closed_loop_count: IntProperty(
+        name="Closed Boundary Loops",
+        default=0,
+        min=0,
+    )
+
+    uv_open_chain_count: IntProperty(
+        name="Open Boundary Chains",
+        default=0,
+        min=0,
+    )
+
+    largest_loop_edge_count: IntProperty(
+        name="Largest Loop",
+        default=0,
+        min=0,
+    )
+
+    smallest_loop_edge_count: IntProperty(
+        name="Smallest Loop",
         default=0,
         min=0,
     )

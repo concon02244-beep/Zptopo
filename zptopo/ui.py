@@ -36,21 +36,47 @@ class ZPTOPO_PT_main_panel(bpy.types.Panel):
         layout.separator()
 
         box = layout.box()
-        box.label(text="UV Information", icon="GROUP_UVS")
+
+        box.label(
+            text="UV Information",
+            icon="GROUP_UVS",
+        )
 
         if not state.object_name:
             box.label(text="No UV data loaded")
             return
 
-        box.label(text=f"Object: {state.object_name}")
-        box.label(text=f"Vertices: {state.vertex_count}")
-        box.label(text=f"Edges: {state.edge_count}")
-        box.label(text=f"Faces: {state.face_count}")
-        box.label(text=f"UV Layer: {state.uv_layer_name}")
-        box.label(text=f"UV Loops: {state.uv_loop_count}")
+        box.label(
+            text=f"Object: {state.object_name}"
+        )
 
         box.label(
-            text=f"UV Islands: {state.uv_island_count}",
+            text=f"Vertices: {state.vertex_count}"
+        )
+
+        box.label(
+            text=f"Edges: {state.edge_count}"
+        )
+
+        box.label(
+            text=f"Faces: {state.face_count}"
+        )
+
+        box.label(
+            text=f"UV Layer: {state.uv_layer_name}"
+        )
+
+        box.label(
+            text=f"UV Loops: {state.uv_loop_count}"
+        )
+
+        box.separator()
+
+        box.label(
+            text=(
+                f"UV Islands: "
+                f"{state.uv_island_count}"
+            ),
             icon="UV",
         )
 
@@ -60,6 +86,39 @@ class ZPTOPO_PT_main_panel(bpy.types.Panel):
                 f"{state.uv_boundary_edge_count}"
             ),
             icon="EDGESEL",
+        )
+
+        box.separator()
+
+        box.label(
+            text=(
+                "Closed Boundary Loops: "
+                f"{state.uv_closed_loop_count}"
+            ),
+            icon="LOOPSEL",
+        )
+
+        box.label(
+            text=(
+                "Open Boundary Chains: "
+                f"{state.uv_open_chain_count}"
+            ),
+        )
+
+        box.label(
+            text=(
+                "Largest Loop: "
+                f"{state.largest_loop_edge_count} "
+                "edges"
+            ),
+        )
+
+        box.label(
+            text=(
+                "Smallest Loop: "
+                f"{state.smallest_loop_edge_count} "
+                "edges"
+            ),
         )
 
 
