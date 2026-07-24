@@ -76,6 +76,35 @@ class ZPTOPO_PG_state(bpy.types.PropertyGroup):
         default=0,
         min=0,
     )
+    uv_detected_corner_count: IntProperty(
+        name="Detected Corners",
+        default=0,
+        min=0,
+    )
+
+    uv_loops_with_corners: IntProperty(
+        name="Loops With Corners",
+        default=0,
+        min=0,
+    )
+
+    uv_loops_without_corners: IntProperty(
+        name="Loops Without Corners",
+        default=0,
+        min=0,
+    )
+
+    uv_maximum_corner_count: IntProperty(
+        name="Most Corners In Loop",
+        default=0,
+        min=0,
+    )
+
+    uv_minimum_corner_count: IntProperty(
+        name="Fewest Corners In Loop",
+        default=0,
+        min=0,
+    )
 
     largest_loop_edge_count: IntProperty(
         name="Largest Loop",

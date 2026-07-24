@@ -75,6 +75,25 @@ class ZPTOPO_OT_read_uv(bpy.types.Operator):
         state.uv_failed_loop_order_count = info[
             "uv_failed_loop_order_count"
         ]
+        state.uv_detected_corner_count = info[
+            "uv_detected_corner_count"
+        ]
+
+        state.uv_loops_with_corners = info[
+            "uv_loops_with_corners"
+        ]
+
+        state.uv_loops_without_corners = info[
+            "uv_loops_without_corners"
+        ]
+
+        state.uv_maximum_corner_count = info[
+            "uv_maximum_corner_count"
+        ]
+
+        state.uv_minimum_corner_count = info[
+            "uv_minimum_corner_count"
+        ]
 
         state.largest_loop_edge_count = info[
             "largest_loop_edge_count"
@@ -127,6 +146,30 @@ class ZPTOPO_OT_read_uv(bpy.types.Operator):
         print(
             "Failed Loop Orders: "
             f"{state.uv_failed_loop_order_count}"
+        )
+        print(
+            "Detected Corners: "
+            f"{state.uv_detected_corner_count}"
+        )
+
+        print(
+            "Loops With Corners: "
+            f"{state.uv_loops_with_corners}"
+        )
+
+        print(
+            "Loops Without Corners: "
+            f"{state.uv_loops_without_corners}"
+        )
+
+        print(
+            "Most Corners In Loop: "
+            f"{state.uv_maximum_corner_count}"
+        )
+
+        print(
+            "Fewest Corners In Loop: "
+            f"{state.uv_minimum_corner_count}"
         )
 
         print(

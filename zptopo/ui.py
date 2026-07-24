@@ -118,6 +118,43 @@ class ZPTOPO_PT_main_panel(bpy.types.Panel):
                 f"{state.uv_failed_loop_order_count}"
             ),
         )
+        box.separator()
+
+        box.label(
+            text=(
+                "Detected Corners: "
+                f"{state.uv_detected_corner_count}"
+            ),
+            icon="VERTEXSEL",
+        )
+
+        box.label(
+            text=(
+                "Loops With Corners: "
+                f"{state.uv_loops_with_corners}"
+            ),
+        )
+
+        box.label(
+            text=(
+                "Loops Without Corners: "
+                f"{state.uv_loops_without_corners}"
+            ),
+        )
+
+        box.label(
+            text=(
+                "Most Corners In Loop: "
+                f"{state.uv_maximum_corner_count}"
+            ),
+        )
+
+        box.label(
+            text=(
+                "Fewest Corners In Loop: "
+                f"{state.uv_minimum_corner_count}"
+            ),
+        )
 
         box.label(
             text=(

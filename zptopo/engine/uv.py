@@ -1,5 +1,5 @@
 from .loops import order_boundary_components
-
+from .corners import analyze_ordered_loop_corners
 def _uvs_match(uv_a, uv_b, tolerance=0.000001):
     """두 UV 좌표가 허용 오차 안에서 같은지 확인한다."""
     return (
@@ -409,8 +409,11 @@ def get_uv_boundary_loop_info(
     ordered_loops, failed_loop_orders = order_boundary_components(
         boundary_segments,
         components,
+        
     )
-
+    corner_info = analyze_ordered_loop_corners(
+        ordered_loops
+    )
     closed_loops = [
         component
         for component in components
@@ -449,6 +452,21 @@ def get_uv_boundary_loop_info(
         "ordered_loop_count": len(ordered_loops),
         "failed_loop_order_count": len(
             failed_loop_orders
+        ),
+                "detected_corner_count": (
+            corner_info["total_corner_count"]
+        ),
+        "loops_with_corners": (
+            corner_info["loops_with_corners"]
+        ),
+        "loops_without_corners": (
+            corner_info["loops_without_corners"]
+        ),
+        "maximum_corner_count": (
+            corner_info["maximum_corner_count"]
+        ),
+        "minimum_corner_count": (
+            corner_info["minimum_corner_count"]
         ),
         "largest_loop_edge_count": (
             largest_loop_edge_count
@@ -617,6 +635,31 @@ def get_uv_info(context):
         "uv_failed_loop_order_count": (
             boundary_loop_info[
                 "failed_loop_order_count"
+            ]
+        ),
+                "uv_detected_corner_count": (
+            boundary_loop_info[
+                "detected_corner_count"
+            ]
+        ),
+        "uv_loops_with_corners": (
+            boundary_loop_info[
+                "loops_with_corners"
+            ]
+        ),
+        "uv_loops_without_corners": (
+            boundary_loop_info[
+                "loops_without_corners"
+            ]
+        ),
+        "uv_maximum_corner_count": (
+            boundary_loop_info[
+                "maximum_corner_count"
+            ]
+        ),
+        "uv_minimum_corner_count": (
+            boundary_loop_info[
+                "minimum_corner_count"
             ]
         ),
         "largest_loop_edge_count": (
